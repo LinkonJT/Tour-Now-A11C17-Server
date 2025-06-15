@@ -29,7 +29,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
-    /***********************start: playing field******************************************* */
+    /***********************START: playing field******************************************* */
 
 const tourPackagesCollection = client.db('tourNowDB').collection('all-packages')
 
@@ -41,14 +41,24 @@ app.post('/all-packages', async (req, res)=>{
 })
  /**##### END: post/insert in the MongoDB ####*/
 
+
+  /**##### All the posted packages List ####*/
 app.get('/all-packages', async (req, res)=>{
   const packages = await tourPackagesCollection.find().toArray()
   res.send (packages)
 })
 
 
+ /**##### single package details page ####*/
+ app.get ('/pkg-details/:id', async (req, res)=>{
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)}
+  const package = await tourPackagesCollection.findOne(query);
+  res.send (package)
+ })
 
-    /***********************end: playing field******* ******************************************/
+
+    /***********************END: playing field******* ******************************************/
 
 
     // Send a ping to confirm a successful connection
