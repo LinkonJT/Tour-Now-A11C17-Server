@@ -49,13 +49,23 @@ app.get('/all-packages', async (req, res)=>{
 })
 
 
- /**##### single package details page ####*/
+ /**#single package details page ####*/
  app.get ('/pkg-details/:id', async (req, res)=>{
   const id = req.params.id;
   const query = {_id: new ObjectId(id)}
   const package = await tourPackagesCollection.findOne(query);
   res.send (package)
  })
+
+ 
+/**#### manageMyPackages: to show only logged in user's/guides posted Packages #### */
+app.get (`/manage-my-Packages/:email`, async (req, res)=>{
+  const email = req.params.email
+  const query = {email: email}
+  const myPackages = await tourPackagesCollection.find(query).toArray()
+  req.send (myPackages)
+})
+
 
 
     /***********************END: playing field******* ******************************************/
