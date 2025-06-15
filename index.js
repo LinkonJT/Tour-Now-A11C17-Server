@@ -74,6 +74,29 @@ app.delete (`/manage-my-packages/:id`, async (req, res)=>{
   res.send(result)
 })
 
+/**#### update database #### */
+app.get ('/update-package/:id', async(req, res)=>{
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)};
+  const package = await tourPackagesCollection.findOne(query);
+  res.send(package);
+})
+
+app.put('/update-package/:id', async (req, res)=>{
+  const id = req.params.id;
+  const filter = {_id: new ObjectId(id)};
+  const package = req.body;
+
+  const options = {upsert: true};
+  const updateDoc = {
+    $set: package
+  }
+
+  const result = await tourPackagesCollection.updateOne(filter, updateDoc, options)
+res.send(result)
+})
+
+
     /***********************END: playing field******* ******************************************/
 
 
