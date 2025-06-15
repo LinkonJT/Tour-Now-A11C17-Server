@@ -59,11 +59,11 @@ app.get('/all-packages', async (req, res)=>{
 
  
 /**#### manageMyPackages: to show only logged in user's/guides posted Packages #### */
-app.get (`/manage-my-Packages/:email`, async (req, res)=>{
+app.get (`/manage-my-packages/:email`, async (req, res)=>{
   const email = req.params.email
-  const query = {email: email}
+  const query = {guide_email: email }
   const myPackages = await tourPackagesCollection.find(query).toArray()
-  req.send (myPackages)
+  res.send (myPackages)
 })
 
 
