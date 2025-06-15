@@ -69,7 +69,7 @@ app.get (`/manage-my-packages/:email`, async (req, res)=>{
 /**#### Delete from database #### */
 app.delete (`/manage-my-packages/:id`, async (req, res)=>{
   const id = req.params.id
-  const query = {_id: id};
+  const query = {_id: new ObjectId(id)};
   const result = await tourPackagesCollection.deleteOne(query)
   res.send(result)
 })
