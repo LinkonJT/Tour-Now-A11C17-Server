@@ -31,7 +31,10 @@ async function run() {
 
     /***********************START: playing field******************************************* */
 
-const tourPackagesCollection = client.db('tourNowDB').collection('all-packages')
+const tourPackagesCollection = client.db('tourNowDB').collection('all-packages');
+const bookingsCollection = client.db('tourNowDB').collection('bookings');
+
+
 
 /***### post/insert in the MongoDB ### */
 app.post('/all-packages', async (req, res)=>{
@@ -74,7 +77,7 @@ app.delete (`/manage-my-packages/:id`, async (req, res)=>{
   res.send(result)
 })
 
-/**#### update database #### */
+/**#### update packakge database #### */
 app.get ('/update-package/:id', async(req, res)=>{
   const id = req.params.id;
   const query = {_id: new ObjectId(id)};
@@ -95,6 +98,18 @@ app.put('/update-package/:id', async (req, res)=>{
   const result = await tourPackagesCollection.updateOne(filter, updateDoc, options)
 res.send(result)
 })
+
+
+/**####Post Booking FOrm */
+
+app.post('/bookings', async(req, res)=>{
+  const booking = req.body;
+  const result = await bookingsCollection.insertOne(booking)
+  res.send (result)
+})
+
+
+
 
 
     /***********************END: playing field******* ******************************************/
