@@ -114,7 +114,7 @@ app.get (`/manage-my-packages/:email`, verifyFirebaseToken, async (req, res)=>{
 
   const email = req.params.email
   
-  if(req.tokenEmail != email){
+  if(email != req.decoded.email){
     return res.status(403).send({message: 'forbidden access'})
   }
   const query = {guide_email: email }
@@ -179,15 +179,20 @@ app.get('/tours/:id', async (req, res)=>{
 
 
 /*****My bookings */
-app.get('/bookings', async (req, res)=>{
+app.get('/bookings', verifyFirebaseToken, async (req, res)=>{
   const email = req.query.email
+
+    if (email !== req.decoded.email) {
+    return res.status(403).send({ message: 'Forbidden access' });
+  }
+
   const query = {buyer_email: email}
   const result = await bookingsCollection.find(query).toArray()
   res.send (result)
 })
 
 /**update booking status */
-app.patch('/bookings/:id', async (req, res) => {
+app.patch('/bookings/:id', verifyFirebaseToken, async (req, res) => {
   const id = req.params.id;
   const updatedStatus = req.body.status;
   const result = await bookingsCollection.updateOne(
