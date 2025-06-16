@@ -22,6 +22,24 @@ admin.initializeApp({
 
 /** */
 
+
+    /****Firebase verify token middleware*/
+const verifyFirebaseToken = async (req, res, next) =>{
+  const authHeader = req.headers?.authorization;
+  const token = authHeader.split(' ')[1];
+  if(!token){
+    return res.status(401).send({message: 'unauthorized access'})
+  }
+  // console.log('firebase token', token)
+  const userInfo = await admin.auth().verifyIdToken(token)
+  // console.log('inside the token', userInfo)
+  req.tokenEmail = userInfo.email;
+  next()
+}
+    /**end:firebase verify token */
+
+
+
 /*******########### Start:  MongoDB  ###########*****/
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.3h4lqut.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -44,20 +62,6 @@ async function run() {
 
 
 
-    /****Firebase verify token middleware*/
-const verifyFirebaseToken = (req, res, next) =>{
-  const authHeader = req.headers?.authorization;
-  const token = authHeader.split(' ')[1];
-  if(token){
-    return res.status(401).send({message: 'unauthorized access'})
-  }
-  console.log('firebase token', token)
-}
-
-
-
-
-    /**end:firebase verify token */
 
 const tourPackagesCollection = client.db('tourNowDB').collection('all-packages');
 const bookingsCollection = client.db('tourNowDB').collection('bookings');
@@ -91,7 +95,14 @@ app.get('/all-packages', async (req, res)=>{
  
 /**#### manageMyPackages: to show only logged in user's/guides posted Packages #### */
 app.get (`/manage-my-packages/:email`, verifyFirebaseToken, async (req, res)=>{
+
+
   const email = req.params.email
+
+  
+  if(req.tokenEmail != email){
+    return res.status(403).send({message: 'forbidden access'})
+  }
   const query = {guide_email: email }
   const myPackages = await tourPackagesCollection.find(query).toArray()
   res.send (myPackages)
