@@ -109,8 +109,33 @@ app.post('/bookings', async(req, res)=>{
 })
 
 
+app.get('/tours/:id', async (req, res)=>{
+    const id = req.params.id;
+  const query = {_id: new ObjectId(id)}
+  const tour = await tourPackagesCollection.findOne(query);
+  res.send (tour)
+})
+/***end:post booking form */
 
 
+/*****My bookings */
+app.get('/bookings', async (req, res)=>{
+  const email = req.query.email
+  const query = {buyer_email: email}
+  const result = await bookingsCollection.find(query).toArray()
+  res.send (result)
+})
+
+/**update booking status */
+app.patch('/bookings/:id', async (req, res) => {
+  const id = req.params.id;
+  const updatedStatus = req.body.status;
+  const result = await bookingsCollection.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { status: updatedStatus } }
+  );
+  res.send(result);
+});
 
     /***********************END: playing field******* ******************************************/
 
