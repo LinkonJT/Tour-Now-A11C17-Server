@@ -10,6 +10,17 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 app.use(express.json());
 app.use(cors())
 
+/**fb admin setup*/
+
+var admin = require("firebase-admin");
+
+var serviceAccount = require("./firebase-adminsdk-key.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+/** */
 
 /*******########### Start:  MongoDB  ###########*****/
 
@@ -44,17 +55,7 @@ const verifyFirebaseToken = (req, res, next) =>{
 }
 
 
-/**fb admin setup*/
 
-var admin = require("firebase-admin");
-
-var serviceAccount = require("./firebase-adminsdk-key.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
-/** */
 
     /**end:firebase verify token */
 
