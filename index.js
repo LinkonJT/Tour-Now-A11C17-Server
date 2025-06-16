@@ -31,6 +31,20 @@ async function run() {
 
     /***********************START: playing field******************************************* */
 
+
+
+    /****Firebase verify token middleware*/
+const verifyFirebaseToken = (req, res, next) =>{
+  const authHeader = req.headers?.authorization;
+  const token = authHeader.split(' ')[1];
+  if(token){
+    return res.status(401).send({message: 'unauthorized access'})
+  }
+  console.log('firebase token', token)
+}
+
+    /**end:firebase verify token */
+
 const tourPackagesCollection = client.db('tourNowDB').collection('all-packages');
 const bookingsCollection = client.db('tourNowDB').collection('bookings');
 
