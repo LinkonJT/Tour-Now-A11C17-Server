@@ -26,15 +26,31 @@ admin.initializeApp({
     /****Firebase verify token middleware*/
 const verifyFirebaseToken = async (req, res, next) =>{
   const authHeader = req.headers?.authorization;
+
+if(!authHeader || !authHeader.startsWith('Bearer ')){
+  return res.status(401).send({message: 'unauthorized access'})
+}
+
   const token = authHeader.split(' ')[1];
   if(!token){
     return res.status(401).send({message: 'unauthorized access'})
   }
   // console.log('firebase token', token)
-  const userInfo = await admin.auth().verifyIdToken(token)
+  try {
+    const decoded = await admin.auth().verifyIdToken(token);
+    console.log('decoded token', decoded)
+    //  req.tokenEmail = decoded.email;
+    req.decoded = decoded;
+    next()
+  }
+  catch(error){
+    
+
+     return res.status(401).send({message: 'unauthorized access'})
+  }
   // console.log('inside the token', userInfo)
-  req.tokenEmail = userInfo.email;
-  next()
+ 
+  
 }
     /**end:firebase verify token */
 
@@ -96,9 +112,7 @@ app.get('/all-packages', async (req, res)=>{
 /**#### manageMyPackages: to show only logged in user's/guides posted Packages #### */
 app.get (`/manage-my-packages/:email`, verifyFirebaseToken, async (req, res)=>{
 
-
   const email = req.params.email
-
   
   if(req.tokenEmail != email){
     return res.status(403).send({message: 'forbidden access'})
@@ -109,7 +123,7 @@ app.get (`/manage-my-packages/:email`, verifyFirebaseToken, async (req, res)=>{
 })
 
 /**#### Delete from database #### */
-app.delete (`/manage-my-packages/:id`, async (req, res)=>{
+app.delete (`/manage-my-packages/:id`, verifyFirebaseToken, async (req, res)=>{
   const id = req.params.id
   const query = {_id: new ObjectId(id)};
   const result = await tourPackagesCollection.deleteOne(query)
