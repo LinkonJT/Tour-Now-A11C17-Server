@@ -1,4 +1,4 @@
 
 node_modules
 .env
-firebase-adminsdk-key.json
+firebase-admin-key.json
