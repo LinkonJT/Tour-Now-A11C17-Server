@@ -43,6 +43,19 @@ const verifyFirebaseToken = (req, res, next) =>{
   console.log('firebase token', token)
 }
 
+
+/**fb admin setup*/
+
+var admin = require("firebase-admin");
+
+var serviceAccount = require("./firebase-adminsdk-key.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+/** */
+
     /**end:firebase verify token */
 
 const tourPackagesCollection = client.db('tourNowDB').collection('all-packages');
@@ -76,7 +89,7 @@ app.get('/all-packages', async (req, res)=>{
 
  
 /**#### manageMyPackages: to show only logged in user's/guides posted Packages #### */
-app.get (`/manage-my-packages/:email`, async (req, res)=>{
+app.get (`/manage-my-packages/:email`, verifyFirebaseToken, async (req, res)=>{
   const email = req.params.email
   const query = {guide_email: email }
   const myPackages = await tourPackagesCollection.find(query).toArray()
