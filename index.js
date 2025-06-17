@@ -95,7 +95,15 @@ app.post('/all-packages', async (req, res)=>{
 
   /**##### All the posted packages List ####*/
 app.get('/all-packages', async (req, res)=>{
-  const packages = await tourPackagesCollection.find().toArray()
+    const search = req.query.search || '';
+
+     const query = {
+    $or: [
+      { tour_name: { $regex: search, $options: 'i' } },
+      { destination: { $regex: search, $options: 'i' } }
+    ]
+  };
+  const packages = await tourPackagesCollection.find(query).toArray()
   res.send (packages)
 })
 
