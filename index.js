@@ -249,7 +249,7 @@ app.post("/newsletter", async (req, res) => {
 
 
 app.post('/client-experience', async (req, res) => {
-  const { comment, rating } = req.body;
+  const { comment, rating, name, photoURL } = req.body;
 
   if (!comment || !rating) {
     return res.status(400).json({ error: "Comment and rating are required." });
@@ -259,6 +259,8 @@ app.post('/client-experience', async (req, res) => {
     const result = await clientExperienceCollection.insertOne({
       comment,
       rating,
+      name: name || "Anonymous",
+      photoURL: photoURL || "",
       createdAt: new Date(),
     });
     res.status(200).json({ message: "Feedback submitted", id: result.insertedId });
