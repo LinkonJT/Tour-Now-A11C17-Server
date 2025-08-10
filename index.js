@@ -81,6 +81,8 @@ async function run() {
 
 const tourPackagesCollection = client.db('tourNowDB').collection('all-packages');
 const bookingsCollection = client.db('tourNowDB').collection('bookings');
+const newslettersCollection = client.db('tourNowDB').collection('newsletters');
+
 
 
 
@@ -209,6 +211,32 @@ app.patch('/bookings/:id', verifyFirebaseToken, async (req, res) => {
   );
   res.send(result);
 });
+
+
+//for the newsletters
+app.post("/newsletter", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  try {
+    const result = await newslettersCollection.insertOne({
+      email,
+      subscribedAt: new Date(),
+    });
+
+    res.status(200).json({
+      message: "Subscription successful",
+      id: result.insertedId
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to subscribe" });
+  }
+});
+
 
     /***********************END: playing field******* ******************************************/
 
