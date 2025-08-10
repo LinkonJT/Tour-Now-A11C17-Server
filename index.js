@@ -82,7 +82,7 @@ async function run() {
 const tourPackagesCollection = client.db('tourNowDB').collection('all-packages');
 const bookingsCollection = client.db('tourNowDB').collection('bookings');
 const newslettersCollection = client.db('tourNowDB').collection('newsletters');
-
+const clientExperienceCollection = client.db('tourNowDB').collection('client-experiences');
 
 
 
@@ -243,6 +243,32 @@ app.post("/newsletter", async (req, res) => {
     res.status(500).json({ error: "Failed to subscribe" });
   }
 });
+
+
+/***Client Experience Collection */
+
+
+app.post('/client-experience', async (req, res) => {
+  const { comment, rating } = req.body;
+
+  if (!comment || !rating) {
+    return res.status(400).json({ error: "Comment and rating are required." });
+  }
+
+  try {
+    const result = await clientExperienceCollection.insertOne({
+      comment,
+      rating,
+      createdAt: new Date(),
+    });
+    res.status(200).json({ message: "Feedback submitted", id: result.insertedId });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to submit feedback" });
+  }
+});
+
+
 
 
     /***********************END: playing field******* ******************************************/
