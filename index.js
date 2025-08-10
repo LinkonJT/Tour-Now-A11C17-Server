@@ -119,6 +119,13 @@ app.get('/all-packages', async (req, res)=>{
  })
 
  
+
+ /******most popular packages ####*/
+app.get('/most-popular-packages', async (req, res) => {
+  const packages = await tourPackagesCollection.find().sort({ booking_count: -1 }).limit(3).toArray();
+  res.send(packages);
+});
+
 /**#### manageMyPackages: to show only logged in user's/guides posted Packages #### */
 app.get (`/manage-my-packages/:email`, verifyFirebaseToken, async (req, res)=>{
 
