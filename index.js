@@ -269,6 +269,18 @@ app.post('/client-experience', async (req, res) => {
 });
 
 
+app.get('/client-experience', async (req, res) => {
+  try {
+    const feedbacks = await clientExperienceCollection
+      .find({})
+      .sort({ createdAt: -1 })
+      .toArray();
+    res.status(200).json(feedbacks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch feedbacks" });
+  }
+});
 
 
     /***********************END: playing field******* ******************************************/
